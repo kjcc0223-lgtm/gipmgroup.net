@@ -5,26 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>세계중보기도센터 GIPC</title>
   <style>
-  :root{
-    --bg:#faf7f2;
-    --paper:#ffffff;
-    --paper-2:#f3ebdd;
-    --text:#0f172a;
-    --muted:#64748b;
-    --line:rgba(15,23,42,.08);
-    --accent:#1f2937;
-    --accent-2:#d97706;
-    --danger:#dc2626;
-    --shadow:0 10px 30px rgba(15,23,42,.08);
-    --radius:28px;
-    --max:1200px;
-  }
-
-  .site-logo{
-    height: 60px;
-    width: auto;
-    display: block;
-  }
+    :root{
+      --bg:#faf7f2;
+      --paper:#ffffff;
+      --paper-2:#f3ebdd;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.08);
+      --accent:#1f2937;
+      --accent-2:#d97706;
+      --danger:#dc2626;
+      --shadow:0 10px 30px rgba(15,23,42,.08);
+      --radius:28px;
+      --max:1200px;
+    }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
@@ -82,6 +76,7 @@
       display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748b
     }
     .brand strong{display:block;font-size:18px}
+    .site-logo{height:60px;width:auto;display:block}
     .nav{
       display:flex;gap:22px;align-items:center;
       color:#475569;font-size:14px;flex-wrap:wrap;justify-content:center;
@@ -208,11 +203,11 @@
 <body>
   <header>
     <div class="container topbar">
-    <div class="brand">
-    <img src="LOGO.png" alt="세계중보기도센터" class="site-logo">
+      <div class="brand">
+        <img src="logo.png" alt="세계중보기도센터 로고" class="site-logo">
         <div>
-          <small>Global Intercession</small>
-          <strong>세계중보기도센터 GIPC</strong>
+          <small id="brand-en">Global Intercession</small>
+          <strong id="brand-ko">세계중보기도센터 GIPC</strong>
         </div>
       </div>
 
@@ -235,11 +230,11 @@
       <div class="container hero-grid">
         <div>
           <div class="eyebrow"><strong>P1 / P2</strong><span>예수께 나아가는 기도, 열방을 향한 기도</span></div>
-          <h1>
+          <h1 id="hero-title">
             오늘, <span class="hl">예수와 동행하며</span><br />
             <span class="hl">열방을 품는 중보자</span>로 서십시오.
           </h1>
-          <p class="lead">
+          <p class="lead" id="hero-description">
             GIPC는 성도들이 일상에서 예수와 동행하고(P1), 전략적으로 열방을 위해 기도하도록(P2)
             돕는 디지털 훈련 및 선교 동원 허브입니다.
           </p>
@@ -590,8 +585,8 @@
   <footer>
     <div class="container footer-grid">
       <div>
-        <div style="font-weight:700;color:#0f172a">세계중보기도센터 GIPC</div>
-        <p class="muted" style="margin-top:12px">
+        <div style="font-weight:700;color:#0f172a" id="footer-org-name">세계중보기도센터 GIPC</div>
+        <p class="muted" style="margin-top:12px" id="footer-description">
           GIPC는 예수 그리스도 안에서의 깊은 동행(P1)과 열방을 향한 전략적 중보(P2)를 돕는 디지털 기도 허브입니다.
         </p>
       </div>
@@ -608,9 +603,9 @@
       <div>
         <div style="font-weight:700;color:#0f172a">연락처 & 언어</div>
         <p class="muted" style="margin-top:12px">
-          서울시 ○○구 ○○로 00<br />
-          Tel. 02-000-0000<br />
-          Email. info@gipc.org
+          <span id="contact-address">서울시 ○○구 ○○로 00</span><br />
+          Tel. <span id="contact-phone">02-000-0000</span><br />
+          Email. <span id="contact-email">info@gipc.org</span>
         </p>
         <div class="chips" style="margin-top:14px">
           <span class="chip chip-outline">한국어</span>
@@ -618,7 +613,42 @@
         </div>
       </div>
     </div>
-    <div class="container footer-bottom">© 2026 GIPC · Global Intercession &amp; Prayer Center. All rights reserved.</div>
+    <div class="container footer-bottom" id="footer-copyright">© 2026 GIPC · Global Intercession &amp; Prayer Center. All rights reserved.</div>
   </footer>
+
+  <script>
+    async function loadCmsContent() {
+      try {
+        const response = await fetch('/content/site.json', { cache: 'no-store' });
+        if (!response.ok) return;
+        const data = await response.json();
+
+        const setText = (id, value) => {
+          const el = document.getElementById(id);
+          if (el && value !== undefined && value !== null) el.textContent = value;
+        };
+        const setHtml = (id, value) => {
+          const el = document.getElementById(id);
+          if (el && value !== undefined && value !== null) el.innerHTML = value;
+        };
+
+        if (data.page_title) document.title = data.page_title;
+        setText('brand-en', data.brand_en);
+        setText('brand-ko', data.brand_ko);
+        setHtml('hero-title', data.hero_title);
+        setText('hero-description', data.hero_description);
+        setText('footer-org-name', data.footer_org_name);
+        setText('footer-description', data.footer_description);
+        setText('contact-address', data.contact_address);
+        setText('contact-phone', data.contact_phone);
+        setText('contact-email', data.contact_email);
+        setHtml('footer-copyright', data.footer_copyright);
+      } catch (error) {
+        console.warn('CMS content could not be loaded.', error);
+      }
+    }
+    loadCmsContent();
+  </script>
+
 </body>
 </html>
